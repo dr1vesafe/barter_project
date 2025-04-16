@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from .models import Ad, ExchangeProposal
 from .forms import AdForm, ExchangeProposalForm
@@ -180,3 +180,23 @@ class ProposalCreateView(LoginRequiredMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context['head_title'] = 'Создание предложения'
         return context
+    
+# Изменение статуса предложения
+class ProposalUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = ExchangeProposal
+    fields = []
+
+    def test_func(self):
+        proposal = self.get_object()
+        return proposal.ad_receiver.user == self.request.user
+
+    def get_success_url(self):
+        return reverse_lazy('ads:proposal_list', kwargs={'pk': self.object.ad_receiver.id})
+    
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        new_status = request.GET.get('status')
+        if new_status in ['accepted', 'rejected']:
+            self.object.status = new_status
+            self.object.save()
+        return redirect(self.get_success_url())
