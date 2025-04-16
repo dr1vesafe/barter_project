@@ -27,8 +27,8 @@
     <p>Автор: {{ ad.user.username }} | Дата: {{ ad.created_at }}</p>
 
     {% if ad.user == user %}
-        Редактировать |
-        Удалить
+        <a href="{% url "ads:ad_update" ad.pk %}">Редактировать</a> |
+        <a href="{% url "ads:ad_delete" ad.pk %}">Удалить</a>
     {% else %}
         Предложить обмен
     {% endif %}

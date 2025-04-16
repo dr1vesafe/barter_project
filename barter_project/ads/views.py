@@ -4,10 +4,10 @@ from .models import Ad, ExchangeProposal
 from .forms import AdForm
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.views.generic import TemplateView, ListView, FormView, CreateView
+from django.views.generic import TemplateView, ListView, FormView, CreateView, UpdateView, DeleteView
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 # Главная страница
 class IndexView(TemplateView):
@@ -23,7 +23,7 @@ class AdListView(ListView):
     model = Ad
     template_name = 'ads/ad_list.html'
     context_object_name = 'page_obj'
-    paginate_by = 5
+    paginate_by = 3
 
     def get_queryset(self):
         queryset = Ad.objects.all().order_by('-created_at')
@@ -65,7 +65,8 @@ class RegistrationView(FormView):
         context = super().get_context_data(**kwargs)
         context['head_title'] = 'Регистрация'
         return context
-    
+
+# Создание объявления
 class AdCreationView(LoginRequiredMixin, CreateView):
     model = Ad
     form_class = AdForm
@@ -75,3 +76,39 @@ class AdCreationView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['head_title'] = 'Создание объявления'
+        return context
+    
+# Редактирование объявления
+class AdUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Ad
+    form_class = AdForm
+    template_name = 'ads/ad_form.html'
+    success_url = reverse_lazy('ads:ad_list')
+
+    def test_func(self):
+        ad = self.get_object()
+        return self.request.user == ad.user
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['head_title'] = 'Редактирование объявления'
+        return context
+    
+# Удаления объявления
+class AdDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Ad
+    template_name = 'ads/ad_delete.html'
+    success_url = reverse_lazy('ads:ad_list')
+
+    def test_func(self):
+        ad = self.get_object()
+        return self.request.user == ad.user
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['head_title'] = 'Удаление объявления'
+        return context
