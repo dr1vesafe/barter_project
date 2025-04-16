@@ -4,7 +4,7 @@ from .models import Ad, ExchangeProposal
 from .forms import AdForm
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.views.generic import TemplateView, ListView, FormView, CreateView, UpdateView, DeleteView
+from django.views.generic import TemplateView, ListView, FormView, CreateView, UpdateView, DeleteView, DetailView
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -126,4 +126,15 @@ class ProfileView(LoginRequiredMixin, TemplateView):
         context['sent_proposals'] = ExchangeProposal.objects.filter(ad_sender__user=user)
         context['received_proposals'] = ExchangeProposal.objects.filter(ad_receiver__user=user)
 
+        return context
+    
+# Страница объявления
+class AdPageView(DetailView):
+    model = Ad
+    template_name = 'ads/ad_page.html'
+    context_object_name = 'ad'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['head_title'] = self.object.title
         return context

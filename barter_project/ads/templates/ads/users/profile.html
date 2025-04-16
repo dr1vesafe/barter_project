@@ -14,7 +14,7 @@
         <br>
         {{ ad.description|truncatewords:20 }}
         <br>
-        Подробнее |
+        <a href="{% url "ads:ad_page" ad.pk %}">Подробнее</a> |
         <a href="{% url 'ads:ad_update' ad.pk %}">Редактировать</a> |
         <a href="{% url 'ads:ad_delete' ad.pk %}">Удалить</a>
       </li>

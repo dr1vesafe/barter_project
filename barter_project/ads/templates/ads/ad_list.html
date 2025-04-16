@@ -18,7 +18,7 @@
 
 {% for ad in page_obj %}
     <hr>
-    <h3>{{ ad.title }}</h3>
+    <h3><a href="{% url "ads:ad_page" ad.pk %}">{{ ad.title }}</a></h3>
     {% if ad.image_url %}
         <img src="{{ ad.image_url }}" alt="{{ ad.title }}" width="200">
     {% endif %}
