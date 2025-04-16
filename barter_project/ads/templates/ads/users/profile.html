@@ -30,12 +30,40 @@
 
 <h3>Отправленные предложения</h3>
 {% if sent_proposals %}
+<ul>
+  {% for p in sent_proposals %}
+    <li>
+      Вы предложили обмен на <strong>{{ p.ad_receiver.title }}</strong>
+      (своё объявление: <strong>{{ p.ad_sender.title }}</strong>)
+      <br>
+      Комментарий: {{ p.comment }}
+      <br>
+      Статус: {{ p.get_status_display }}
+      <br>
+      Дата: {{ p.created_at|date:"d.m.Y H:i" }}
+    </li>
+  {% endfor %}
+</ul>
 {% else %}
   <p>Вы ещё не отправляли предложения.</p>
 {% endif %}
 
 <h3>Полученные предложения</h3>
 {% if received_proposals %}
+<ul>
+  {% for p in received_proposals %}
+    <li>
+      Вам предложили обмен на <strong>{{ p.ad_receiver.title }}</strong>
+      (предложено: <strong>{{ p.ad_sender.title }}</strong>)
+      <br>
+      Комментарий: {{ p.comment }}
+      <br>
+      Статус: {{ p.get_status_display }}
+      <br>
+      Отправитель: {{ p.ad_sender.user.username }}
+    </li>
+  {% endfor %}
+</ul>
 {% else %}
   <p>Пока нет входящих предложений.</p>
 {% endif %}

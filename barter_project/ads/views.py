@@ -22,7 +22,6 @@ class IndexView(TemplateView):
 class AdListView(ListView):
     model = Ad
     template_name = 'ads/ad_list.html'
-    context_object_name = 'page_obj'
     paginate_by = 3
 
     def get_queryset(self):
@@ -37,7 +36,7 @@ class AdListView(ListView):
             )
 
         if category:
-            queryset = queryset.filter(category__icontains=category)
+            queryset = queryset.filter(category=category)
 
         if condition:
             queryset = queryset.filter(condition=condition)

@@ -21,6 +21,9 @@
     <a href="{% url 'ads:ad_delete' ad.pk %}">Удалить</a>
   </p>
 {% else %}
+  <p>
+    <a href="{% url 'ads:proposal_create' ad.pk %}">Предложить обмен</a>
+  </p>
 {% endif %}
 
 <a href="{% url 'ads:ad_list' %}">Список объявлений</a>

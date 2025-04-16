@@ -5,7 +5,14 @@
 
 <form method="get">
     <input type="text" name="q" placeholder="Поиск" value="{{ request.GET.q }}">
-    <input type="text" name="category" placeholder="Категория" value="{{ request.GET.category }}">
+    <select name="category">
+        <option value="">Категория</option>
+        <option value="clothes">Одежда</option>
+        <option value="electronics">Электроника</option>
+        <option value="jewelry">Бижутерия</option>
+        <option value="furniture">Мебель</option>
+        <option value="other">Другое</option>
+    </select>
     <select name="condition">
         <option value="">Состояние</option>
         <option value="new">Новый</option>
@@ -16,7 +23,7 @@
 
 <a href="{% url "ads:ad_create" %}">Создать объявление</a>
 
-{% for ad in page_obj %}
+{% for ad in object_list %}
     <hr>
     <h3><a href="{% url "ads:ad_page" ad.pk %}">{{ ad.title }}</a></h3>
     {% if ad.image_url %}
