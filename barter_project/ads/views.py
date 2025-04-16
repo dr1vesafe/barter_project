@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from .models import Ad, ExchangeProposal
+from .forms import AdForm
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.views.generic import TemplateView, ListView, FormView
+from django.views.generic import TemplateView, ListView, FormView, CreateView
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 # Главная страница
 class IndexView(TemplateView):
@@ -63,3 +65,13 @@ class RegistrationView(FormView):
         context = super().get_context_data(**kwargs)
         context['head_title'] = 'Регистрация'
         return context
+    
+class AdCreationView(LoginRequiredMixin, CreateView):
+    model = Ad
+    form_class = AdForm
+    template_name = 'ads/ad_form.html'
+    success_url = reverse_lazy('ads:ad_list')
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)

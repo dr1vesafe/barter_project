@@ -35,7 +35,7 @@ DATABASES = {
         'USER': 'user', ## Введите Ваше имя пользователя
         'PASSWORD': 'password', ## Введите Ваш пароль 
         'HOST': 'localhost',
-        'PORT': '',
+        'PORT': '5432',
     }
 }
 ```
