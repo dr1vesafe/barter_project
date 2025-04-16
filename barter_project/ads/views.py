@@ -1,9 +1,13 @@
 from django.shortcuts import render
+from django.urls import reverse_lazy
 from .models import Ad, ExchangeProposal
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.views.generic import TemplateView, ListView
+from django.views.generic import TemplateView, ListView, FormView
+from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm
 
+# Главная страница
 class IndexView(TemplateView):
     template_name = 'ads/index.html'
 
@@ -12,6 +16,7 @@ class IndexView(TemplateView):
         context['head_title'] = 'Главная'
         return context
 
+# Страница со списком объявлений
 class AdListView(ListView):
     model = Ad
     template_name = 'ads/ad_list.html'
@@ -40,4 +45,21 @@ class AdListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['head_title'] = 'Список объявлений'
+        return context
+    
+
+# Регистрация пользователя
+class RegistrationView(FormView):
+    template_name = 'ads/users/registration.html'
+    form_class = UserCreationForm
+    success_url = reverse_lazy('ads:index')
+
+    def form_valid(self, form):
+        user = form.save()
+        login(self.request, user)
+        return super().form_valid(form)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['head_title'] = 'Регистрация'
         return context

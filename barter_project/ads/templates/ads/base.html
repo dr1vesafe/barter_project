@@ -8,9 +8,10 @@
     <header>
         <h1><a href="{% url 'ads:index' %}">Бартерная платформа</a></h1>
         {% if user.is_authenticated %}
-            <p>{{ user.username }} | Выйти</p>
+            <p>{{ user.username }} 
+            <form method='post' action="{% url "logout" %}">{% csrf_token %}<button type='submit'>Выйти</button></form></p>
         {% else %}
-            <p>Войти | Регистрация</p>
+            <p><a href="{% url "login" %}">Войти</a> | <a href="{% url "ads:registration" %}">Регистрация</a></p>
         {% endif %}
         {% if user.is_admin or user.is_staff %}
             <p><a href="{% url "admin:index" %}">Админ панель</a></p>
