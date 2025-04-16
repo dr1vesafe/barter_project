@@ -7,7 +7,7 @@
     <hr>
     <p><strong>От:</strong> {{ proposal.ad_sender.title }} → <strong>К:</strong> {{ proposal.ad_receiver.title }}</p>
     <p>Комментарий: {{ proposal.comment }}</p>
-    <p>Статус: {{ proposal.status }}</p>
+    <p>Статус: {{ proposal.get_status_display }}</p>
     {% if proposal.ad_receiver.user == user %}
         Принять |
         Отклонить

@@ -1,7 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from .models import Ad, ExchangeProposal
-from .forms import AdForm
+from .forms import AdForm, ExchangeProposalForm
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.views.generic import TemplateView, ListView, FormView, CreateView, UpdateView, DeleteView, DetailView
@@ -67,7 +67,7 @@ class RegistrationView(FormView):
         return context
 
 # Создание объявления
-class AdCreationView(LoginRequiredMixin, CreateView):
+class AdCreateView(LoginRequiredMixin, CreateView):
     model = Ad
     form_class = AdForm
     template_name = 'ads/ad_form.html'
@@ -154,4 +154,29 @@ class ProposalListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['head_title'] = 'Список предложений'
+        return context
+    
+# Создание предложения
+class ProposalCreateView(LoginRequiredMixin, CreateView):
+    model = ExchangeProposal
+    form_class = ExchangeProposalForm
+    template_name = 'ads/proposal/proposal_form.html'
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        kwargs['ad_receiver'] = get_object_or_404(Ad, pk=self.kwargs.get('ad_id'))
+        return kwargs
+    
+    def form_valid(self, form):
+        form.instance.ad_receiver = get_object_or_404(Ad, id=self.kwargs['ad_id'])
+        form.instance.status = 'pending'
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return reverse_lazy('ads:proposal_list', kwargs={'pk': self.kwargs['ad_id']})
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['head_title'] = 'Создание предложения'
         return context
