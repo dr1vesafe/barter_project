@@ -10,6 +10,7 @@
         {% if user.is_authenticated %}
             <p><a href="{% url "ads:profile" user.pk %}">{{ user.username }}</a> 
             <form method='post' action="{% url "logout" %}">{% csrf_token %}<button type='submit'>Выйти</button></form></p>
+            <p><a href ="{% url "ads:proposal_list" user.pk %}">Список предложений</a></p>
         {% else %}
             <p><a href="{% url "login" %}">Войти</a> | <a href="{% url "ads:registration" %}">Регистрация</a></p>
         {% endif %}

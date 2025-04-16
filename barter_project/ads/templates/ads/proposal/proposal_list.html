@@ -1,0 +1,18 @@
+{% extends 'ads/base.html' %}
+
+{% block content %}
+<h2>Предложения обмена</h2>
+
+{% for proposal in proposals %}
+    <hr>
+    <p><strong>От:</strong> {{ proposal.ad_sender.title }} → <strong>К:</strong> {{ proposal.ad_receiver.title }}</p>
+    <p>Комментарий: {{ proposal.comment }}</p>
+    <p>Статус: {{ proposal.status }}</p>
+    {% if proposal.ad_receiver.user == user %}
+        Принять |
+        Отклонить
+    {% endif %}
+{% empty %}
+    <p>Нет предложений.</p>
+{% endfor %}
+{% endblock %}

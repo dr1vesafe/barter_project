@@ -138,3 +138,20 @@ class AdPageView(DetailView):
         context = super().get_context_data(**kwargs)
         context['head_title'] = self.object.title
         return context
+    
+# Список предложений
+class ProposalListView(LoginRequiredMixin, ListView):
+    model = ExchangeProposal
+    template_name = 'ads/proposal/proposal_list.html'
+    context_object_name = 'proposals'
+
+    def get_queryset(self):
+        return ExchangeProposal.objects.filter(
+            Q(ad_sender__user=self.request.user) |
+            Q(ad_receiver__user=self.request.user)
+        ).order_by('-created_at')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['head_title'] = 'Список предложений'
+        return context

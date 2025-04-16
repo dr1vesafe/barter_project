@@ -12,4 +12,5 @@ urlpatterns = [
     path('ads/update/<int:pk>/', AdUpdateView.as_view(), name='ad_update'),
     path('ads/delete/<int:pk>/', AdDeleteView.as_view(), name='ad_delete'),
     path('ads/<int:pk>', AdPageView.as_view(), name='ad_page'),
+    path('proposals/list/<int:pk>/', ProposalListView.as_view(), name='proposal_list'),
 ]
