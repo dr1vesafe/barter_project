@@ -1,0 +1,43 @@
+{% extends "ads/base.html" %}
+
+{% block content %}
+<h1>Личный кабинет {{ user.username }}</h1>
+
+<hr>
+
+<h2>Мои объявления</h2>
+{% if ads %}
+  <ul>
+    {% for ad in ads %}
+      <li>
+        <strong>{{ ad.title }}</strong> — {{ ad.get_category_display }} ({{ ad.get_condition_display }})
+        <br>
+        {{ ad.description|truncatewords:20 }}
+        <br>
+        Подробнее |
+        <a href="{% url 'ads:ad_update' ad.pk %}">Редактировать</a> |
+        <a href="{% url 'ads:ad_delete' ad.pk %}">Удалить</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Вы пока не добавили ни одного объявления.</p>
+{% endif %}
+
+<hr>
+
+<h2>Мои предложения обмена</h2>
+
+<h3>Отправленные предложения</h3>
+{% if sent_proposals %}
+{% else %}
+  <p>Вы ещё не отправляли предложения.</p>
+{% endif %}
+
+<h3>Полученные предложения</h3>
+{% if received_proposals %}
+{% else %}
+  <p>Пока нет входящих предложений.</p>
+{% endif %}
+
+{% endblock %}

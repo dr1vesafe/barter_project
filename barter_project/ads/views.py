@@ -112,3 +112,18 @@ class AdDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         context = super().get_context_data(**kwargs)
         context['head_title'] = 'Удаление объявления'
         return context
+    
+# Личный кабинет пользователя
+class ProfileView(LoginRequiredMixin, TemplateView):
+    template_name = 'ads/users/profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        context['head_title'] = 'Личный кабинет'
+        context['ads'] = Ad.objects.filter(user=user)
+        context['sent_proposals'] = ExchangeProposal.objects.filter(ad_sender__user=user)
+        context['received_proposals'] = ExchangeProposal.objects.filter(ad_receiver__user=user)
+
+        return context
