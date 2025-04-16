@@ -1,0 +1,50 @@
+{% extends 'ads/base.html' %}
+
+{% block content %}
+<h2>Объявления</h2>
+
+<form method="get">
+    <input type="text" name="q" placeholder="Поиск" value="{{ request.GET.q }}">
+    <input type="text" name="category" placeholder="Категория" value="{{ request.GET.category }}">
+    <select name="condition">
+        <option value="">Состояние</option>
+        <option value="new">Новый</option>
+        <option value="used">Б/У</option>
+    </select>
+    <button type="submit">Искать</button>
+</form>
+
+Создать объявление
+
+{% for ad in page_obj %}
+    <hr>
+    <h3>{{ ad.title }}</h3>
+    {% if ad.image_url %}
+        <img src="{{ ad.image_url }}" alt="{{ ad.title }}" width="200">
+    {% endif %}
+    <p>{{ ad.description }}</p>
+    <p>Категория: {{ ad.category }} | Состояние: {{ ad.condition }}</p>
+    <p>Автор: {{ ad.user.username }} | Дата: {{ ad.created_at }}</p>
+
+    {% if ad.user == user %}
+        <a href="{% url 'ad_edit' ad.id %}">Редактировать</a> |
+        <a href="{% url 'ad_delete' ad.id %}">Удалить</a>
+    {% else %}
+        <a href="{% url 'proposal_create' ad.id %}">Предложить обмен</a>
+    {% endif %}
+{% empty %}
+    <p>Нет объявлений.</p>
+{% endfor %}
+
+<div>
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">Назад</a>
+    {% endif %}
+
+    <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Вперёд</a>
+    {% endif %}
+</div>
+{% endblock %}

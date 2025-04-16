@@ -25,6 +25,11 @@ class Ad(models.Model):
 
     def __str__(self):
         return self.title
+    
+    class Meta:
+        db_table = 'ad'
+        verbose_name = 'Объявление'
+        verbose_name_plural = 'Объявления'
 
 class ExchangeProposal(models.Model):
     STATUS_CHOICES = [
@@ -37,3 +42,8 @@ class ExchangeProposal(models.Model):
     comment = models.TextField(verbose_name='Комментарий')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending', verbose_name='Статус')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+
+    class Meta:
+        db_table = 'proposal'
+        verbose_name = 'Предложение'
+        verbose_name_plural = 'Предложения'

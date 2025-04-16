@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ head_title }}</title>
+</head>
+<body>
+    <header>
+        <h1><a href="{% url 'ads:index' %}">Бартерная платформа</a></h1>
+        {% if user.is_authenticated %}
+            <p>{{ user.username }} | Выйти</p>
+        {% else %}
+            <p>Войти | Регистрация</p>
+        {% endif %}
+        {% if user.is_admin or user.is_staff %}
+            <p><a href="{% url "admin:index" %}">Админ панель</a></p>
+        {% endif %}
+        <p><a href ="{% url "ads:ad_list" %}">Список объявлений</a></p>
+        <hr>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
