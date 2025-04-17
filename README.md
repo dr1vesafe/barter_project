@@ -28,7 +28,7 @@ docker-compose exec web python manage.py createsuperuser
 
 Запуск тестов:
 ```bash
-docker-compose exec pytest
+docker-compose exec web pytest
 ```
 
 # Стек
