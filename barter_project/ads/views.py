@@ -8,6 +8,9 @@ from django.views.generic import TemplateView, ListView, FormView, CreateView, U
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.cache import cache
+import hashlib
+import json
 
 # Главная страница
 class IndexView(TemplateView):
@@ -25,21 +28,34 @@ class AdListView(ListView):
     paginate_by = 3
 
     def get_queryset(self):
-        queryset = Ad.objects.all().order_by('-created_at')
-        query = self.request.GET.get('query')
-        category = self.request.GET.get('category')
-        condition = self.request.GET.get('condition')
+        query = self.request.GET.get('query', '')
+        category = self.request.GET.get('category', '')
+        condition = self.request.GET.get('condition', '')
 
-        if query:
-            queryset = queryset.filter(
-                Q(title__icontains=query) | Q(description__icontains=query)
-            )
+        key_data = {
+            'query': query, 
+            'category': category, 
+            'condition': condition
+            }
+        
+        key_str = json.dumps(key_data, sort_keys=True)
+        cache_key = 'ad_list' + hashlib.md5(key_str.encode()).hexdigest()
 
-        if category:
-            queryset = queryset.filter(category=category)
+        queryset = cache.get(cache_key)
+        if queryset is None:
+            queryset = Ad.objects.all().order_by('-created_at')
+            if query:
+                queryset = queryset.filter(
+                    Q(title__icontains=query) | Q(description__icontains=query)
+                )
 
-        if condition:
-            queryset = queryset.filter(condition=condition)
+            if category:
+                queryset = queryset.filter(category=category)
+
+            if condition:
+                queryset = queryset.filter(condition=condition)
+
+            cache.set(cache_key, queryset, 60 * 3)
 
         return queryset
 
@@ -74,7 +90,15 @@ class AdCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        self.cache_clear()
+        return response
+    
+    def cache_clear(self):
+        try:
+            cache.delete_pattern('ad_list_*')
+        except AttributeError:
+            pass
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
