@@ -39,7 +39,7 @@ class AdListView(ListView):
             }
         
         key_str = json.dumps(key_data, sort_keys=True)
-        cache_key = 'ad_list' + hashlib.md5(key_str.encode()).hexdigest()
+        cache_key = 'ads:ad_list'
 
         queryset = cache.get(cache_key)
         if queryset is None:

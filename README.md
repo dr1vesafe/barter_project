@@ -6,56 +6,35 @@
 1. Клонируйте репозиторий:
 ```bash
 git clone https://github.com/dr1vesafe/barter_project.git
+cd barter_project
 ```
 
-2. Создайте вирутальное окружение:
-Создание на Windows:
+2. Запустите docker контейнеры:
 ```bash
-python -m venv venv
-venv\Scripts\activate
+docker-compose up --build
 ```
 
-Создание на Linux/Mac:
+3. Примените миграции:
 ```bash
-python -m venv venv
-source venv/bin/activate
+docker-compose exec web python manage.py migrate
 ```
 
-3. Установите зависимости:
+4. Создайте суперпользователя:
 ```bash
-pip install -r requirements.txt
+docker-compose exec web python manage.py createsuperuser
 ```
 
-4. Настройте подключение к базе данных PostgreSQL:
-```bash
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'barter_db',
-        'USER': 'user', ## Введите Ваше имя пользователя
-        'PASSWORD': 'password', ## Введите Ваш пароль 
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
-```
+Проект доступен по адресу: http://localhost:8000
 
-5. Примените миграции
+Запуск тестов:
 ```bash
-python manage.py migrate
-```
-
-6. Создайте суперпользователя
-```bash
-python manage.py createsuperuser
-```
-
-7. Запустите сервер
-```bash
-python manage.py runserver
+docker-compose exec pytest
 ```
 
 # Стек
 - Python 3.8+
 - Django 4+
 - PostgreSQL
+- Redis
+- Docker / Docker Compose
+- Pytest / pytest-django
