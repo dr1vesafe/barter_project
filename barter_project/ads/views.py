@@ -26,13 +26,13 @@ class AdListView(ListView):
 
     def get_queryset(self):
         queryset = Ad.objects.all().order_by('-created_at')
-        q = self.request.GET.get('q')
+        query = self.request.GET.get('query')
         category = self.request.GET.get('category')
         condition = self.request.GET.get('condition')
 
-        if q:
+        if query:
             queryset = queryset.filter(
-                Q(title__icontains=q) | Q(description__icontains=q)
+                Q(title__icontains=query) | Q(description__icontains=query)
             )
 
         if category:
@@ -80,17 +80,20 @@ class AdCreateView(LoginRequiredMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context['head_title'] = 'Создание объявления'
         return context
-    
-# Редактирование объявления
-class AdUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+
+
+class BaseAdView(LoginRequiredMixin, UserPassesTestMixin):
     model = Ad
-    form_class = AdForm
-    template_name = 'ads/ad_form.html'
     success_url = reverse_lazy('ads:ad_list')
 
     def test_func(self):
         ad = self.get_object()
         return self.request.user == ad.user
+
+# Редактирование объявления
+class AdUpdateView(BaseAdView, UpdateView):
+    form_class = AdForm
+    template_name = 'ads/ad_form.html'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -98,14 +101,8 @@ class AdUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return context
     
 # Удаления объявления
-class AdDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = Ad
+class AdDeleteView(BaseAdView, DeleteView):
     template_name = 'ads/ad_delete.html'
-    success_url = reverse_lazy('ads:ad_list')
-
-    def test_func(self):
-        ad = self.get_object()
-        return self.request.user == ad.user
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -183,7 +180,6 @@ class ProposalCreateView(LoginRequiredMixin, CreateView):
 # Изменение статуса предложения
 class ProposalUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = ExchangeProposal
-    fields = []
 
     def test_func(self):
         proposal = self.get_object()
